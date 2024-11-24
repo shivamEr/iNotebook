@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 
-const UserSchema = new Schema({
+const NotesSchema = new mongoose.Schema({
+    // id: { type: String, required: true }, It workes like a foregion key
+    user:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     title: {
         type : String,
         required: true
@@ -21,4 +27,4 @@ const UserSchema = new Schema({
 
 });
 
-module.exports = mongoose.model('user', UserSchema);
+module.exports = mongoose.model('note', NotesSchema);

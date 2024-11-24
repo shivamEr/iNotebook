@@ -3,8 +3,7 @@ const express = require('express');
 const connectToMongo = require('./db');
 const app = express();
 
-// connecting DB
-require('./db');
+// connecting DB from db.js file
 connectToMongo();
 
 // it's used to parse the incoming request bodies in a middleware. like get req in json
@@ -17,5 +16,5 @@ app.get('/',(req, res)=>{
     res.send('Hello, Coders!')
 })
 app.listen(5000,()=>{
-    console.log("server is running on port 3000");
+    console.log("server is running on port 5000");
 })

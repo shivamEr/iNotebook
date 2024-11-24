@@ -8,18 +8,10 @@ const bcrypt = require('bcryptjs');
 
 // use of jwt with jsonwebtoken that is used for authentication 
 const jwt = require('jsonwebtoken');
+const fetchuser = require('../middleware/fetchuser');
 const secretKey = 'mysecretkey';
 
-router.get('/test', query('person').notEmpty().escape(), (req, res) => {
-    const result = validationResult(req);
-    if (result.isEmpty()) {
-        const data = matchedData(req);
-        return res.send(`Hello, ${data.person}!`);
-    }
-    res.send({ errors: result.array() });
-});
-
-// create a user using: POST "/api/auth/createuser". NO login required
+// Route 1 : create a user using: POST "/api/auth/createuser". NO login required
 router.post('/createuser',
     [
         // Validation rules
@@ -71,7 +63,7 @@ router.post('/createuser',
 );
 
 
-// Authenticate a user using: POST "/api/auth/login"
+// Route 2 : Authenticate a user using: POST "/api/auth/login"
 router.post('/login', [
     body('email', 'Please include a valid email').isEmail(),
     body('password', 'Please include a valid password').exists(),
@@ -87,7 +79,7 @@ router.post('/login', [
         if (!user) {
             return res.status(400).json({ error: "Please enter a valid email or password" });
         }
-        
+
         // comparing the password with the hashed password
         const password = req.body.password;
         const isMatch = await bcrypt.compare(password, user.password);
@@ -114,4 +106,18 @@ router.post('/login', [
     }
 });
 
+
+// Route 3 : Get logged in User Details using: POST "/api/auth/getuser". Login required
+router.post('/getuser',fetchuser, async (req, res) => {
+    try {
+        userId = req.user.id;
+        const user = await User.findById(userId).select("-password"); // -password means exclude it
+        res.json(user);
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send('Server error');
+    }
+
+});
 module.exports = router;
