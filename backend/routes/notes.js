@@ -22,7 +22,7 @@ router.post('/addnote', fetchuser, [
     }
     try {
         const { title, description, tag } = req.body;
-        const note = new Note({title,description,tag, user:req.user.id});
+        const note = new Note({ title, description, tag, user: req.user.id });
         await note.save();
         res.json(note);
 
@@ -33,6 +33,50 @@ router.post('/addnote', fetchuser, [
 
 });
 
+// Route 3 : Update an existing Note using : PUT "/api/notes/update" - Login Required
+router.put('/update/:id', fetchuser, async (req, res) => {
+    const { title, description, tag } = req.body;
+    try {
+        const note = await Note.findById(req.params.id);
+        if (!note) {
+            return res.status(404).send("Note not found");
+        }
+        if (note.user.toString() !== req.user.id) {
+            return res.status(401).send("Not allowed to update");
+        }
+        note.title = title;
+        note.description = description;
+        note.tag = tag;
+        await note.save();
+        res.json(note);
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Internal Server Error");
+    }
+})
+
+// Route 4 : Delete a Note using : DELETE "/api/notes/delete" - Login Required
+router.delete('/delete/:id', fetchuser, async (req, res) => {
+    try {
+        // Find the note to be deleted and check if it exists
+        const note = await Note.findById(req.params.id);
+        if (!note) {
+            return res.status(404).send("Note not found");
+        }
+        // Allow deletion only if user owns this Note
+        if (note.user.toString() !== req.user.id) {
+            return res.status(401).send("Not allowed to delete");
+        }
+        // Delete the Note
+        await Note.findByIdAndDelete(req.params.id);
+        res.json({ message: "Note deleted successfully" });
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Internal Server Error");
+    }
+});
 
 
 module.exports = router
