@@ -1,16 +1,24 @@
-import { useState } from 'react'
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Home from './components/Home';
+import About from './components/About';
+import NoteState from './context/notes/NoteState';
+import { Alert } from './components/Alert';
 
 function App() {
-  const [count, setCount] = useState(0)
-   const handleCount = ()=>{
-    setCount(count+1);
-   }
   return (
-    <>
-      <button onClick={handleCount}>Count</button>
-      <p className="read-the-docs">Count : {count}</p>
-    </>
+    <NoteState>
+      <BrowserRouter>
+        <Navbar />
+        <Alert/>
+        <div className="container">
+          <Routes>
+            <Route path='/' element={<Home />} />
+            <Route path='/about' element={<About />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </NoteState>
   )
 }
 
