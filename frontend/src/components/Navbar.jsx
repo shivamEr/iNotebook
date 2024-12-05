@@ -1,8 +1,12 @@
-import React, {useEffect} from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
     const currLocation = useLocation();
+
+    const handleLogout = ()=>{
+        localStorage.removeItem('token');
+        window.location.reload();
+    }
     return (
 
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -14,16 +18,18 @@ const Navbar = () => {
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                         <li className="nav-item">
-                            <Link className={`nav-link ${currLocation.pathname==="/"?"active":""}`} aria-current="page" to="/">Home</Link>
+                            <Link className={`nav-link ${currLocation.pathname === "/" ? "active" : ""}`} aria-current="page" to="/">Home</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className={`nav-link ${currLocation.pathname==="/about"?"active":""}`} to="/about">About</Link>
+                            <Link className={`nav-link ${currLocation.pathname === "/about" ? "active" : ""}`} to="/about">About</Link>
                         </li>
                     </ul>
-                    <form className="d-flex" onSubmit={(e) => { e.preventDefault(); /* handle search */ }}>
-                        <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-                        <button className="btn btn-outline-success" type="submit">Search</button>
-                    </form>
+                    {!localStorage.getItem('token') ? <form className="d-flex" onSubmit={(e) => { e.preventDefault(); /* handle search */ }}>
+                        <Link className="btn btn-primary mx-1" role='button' to="/login">Login</Link>
+                        <Link className="btn btn-primary mx-1" role='button' to="/signup">SignUp</Link>
+                    </form> :
+                        <button className="btn btn-primary" onClick={handleLogout}>Log Out</button>
+                    }
                 </div>
             </div>
         </nav>

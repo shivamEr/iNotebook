@@ -23,14 +23,14 @@ router.post('/createuser',
         // Check for validation errors
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            return res.status(400).json({success:false, errors: errors.array() });
         }
 
         // checked whether the user already exists with this email
         try {
             let user = await User.findOne({ email: req.body.email });
             if (user) {
-                return res.status(400).json({ error: "Sorry a user with this email already exists." });
+                return res.status(400).json({success:false, error: "Sorry a user with this email already exists." });
             }
             // creating secure password by hashing
             const salt = await bcrypt.genSalt(10);
@@ -52,7 +52,7 @@ router.post('/createuser',
             const authtoken = jwt.sign(data, secretKey, {
                 expiresIn: '1h'
             });
-            res.json({ authtoken: authtoken });
+            res.json({success:true, authtoken: authtoken });
             // res.json(user);
 
         } catch (error) {
@@ -71,13 +71,13 @@ router.post('/login', [
     // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({success:false, errors: errors.array() });
     }
     // checking whether the user exists with this email
     try {
         let user = await User.findOne({ email: req.body.email });
         if (!user) {
-            return res.status(400).json({ error: "Please enter a valid email or password" });
+            return res.status(400).json({success:false, error: "Please enter a valid email or password" });
         }
 
         // comparing the password with the hashed password
@@ -85,6 +85,7 @@ router.post('/login', [
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({
+                success:false,
                 error: "Please enter a valid email or password"
             });
         }
@@ -98,7 +99,7 @@ router.post('/login', [
         const authtoken = jwt.sign(data, secretKey, {
             expiresIn: '1h'
         });
-        res.json({ authtoken: authtoken });
+        res.json({success:true, authtoken: authtoken });
         // res.json(user);
     } catch (error) {
         console.error(error.message);
