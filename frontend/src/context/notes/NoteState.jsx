@@ -3,7 +3,7 @@ import NoteContext from "./NoteContext";
 
 const NoteState = (props) => {
   // Create a Host variable to store host origin
-  const host = "http://localhost:5000";
+  const host = import.meta.env.VITE_API_URL;
   const [notes, setNotes] = useState([]);
   
 
