@@ -3,10 +3,13 @@ import noteContext from '../context/notes/NoteContext';
 import NoteItem from './NoteItem';
 import AddNote from './AddNote';
 import { useNavigate } from 'react-router-dom';
+import modeContext from '../context/mode/modeContext';
 
 const Notes = () => {
   const context = useContext(noteContext);
   const { notes, getNotes, editNote} = context;
+
+  const { mode } = useContext(modeContext)
 
   let navigate = useNavigate();
 
@@ -50,9 +53,9 @@ const Notes = () => {
       </button>
 
       {/* Modal for adding note */}
-      <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
         <div className="modal-dialog">
-          <div className="modal-content">
+          <div className={`modal-content bg-${mode == "dark" ? "transparent" : "white"} text-${mode == "dark" ? "white" : "dark"}`}>
             
             <div className="modal-header">
               <h5 className="modal-title" id="exampleModalLabel">Edit Notes</h5>
